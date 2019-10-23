@@ -1,0 +1,12 @@
+{
+  "name": "shareif",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "PORT=10492 node index"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
