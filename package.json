@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "PORT=10492 node index"
+    "peer": "PORT=10492 node ./src/server/index"
   },
   "keywords": [],
   "author": "",
