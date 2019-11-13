@@ -1,27 +1,40 @@
-const crypto = require('crypto')
-const EC = require('elliptic').ec
+const crypto = require("crypto");
+const LENGTH = 256;
 
-const ec = new EC('secp256k1')
-const length = 256
+const { Blockchain, Block } = require("./blockchain");
+const shareif = new Blockchain();
 
-const { Blockchain, Block } = require('./blockchain')
-const shareif = new Blockchain()
+const addBlock = block => {
+  block.signTransaction(shareif.broadcast.privateKey);
+  shareif.addMessage(block);
+};
 
 // Users
-const user2 = crypto.createDiffieHellman(length)
-user2.generateKeys('hex')
+const user2 = crypto.createDiffieHellman(LENGTH);
+user2.generateKeys("hex");
 
 // Chat 1
-const newBlock = new Block(
-	Date.parse('2017-01-01'),
-	shareif.broadcast.publicKey,
-	user2.getPublicKey('hex'),
-	'Batata frita',
-	shareif.getLatestBlock().hash
-)
+addBlock(
+  new Block(
+    Date.parse("2017-01-01"),
+    shareif.broadcast.publicKey,
+    user2.getPublicKey("hex"),
+    "Batata frita",
+    shareif.getLatestBlock().hash
+  )
+);
+addBlock(
+  new Block(
+    Date.parse("2017-01-01"),
+    shareif.broadcast.publicKey,
+    user2.getPublicKey("hex"),
+    "Batata frita fritinha fritosa frituda lorem ipsum dolor sit amet oloquinho meu esse texto ta ficando muito chato de escrever na moral",
+    shareif.getLatestBlock().hash
+  )
+);
 
-newBlock.signTransaction(shareif.broadcast.privateKey)
+console.log(shareif.getLatestBlock().getMessage("shareifPrivateKey"));
 
-shareif.addMessage(newBlock)
+// newBlock.signTransaction(shareif.broadcast.privateKey);
 
-console.log(shareif)
+// shareif.addMessage(newBlock);

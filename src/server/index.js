@@ -8,3 +8,8 @@ const port = process.env.PORT;
 const host = getLocalAddress() || '0.0.0.0';
 
 const server = new Node(port, host);
+
+const port = process.env.PORT;
+const host = getLocalAddress() || '0.0.0.0';
+
+const server = new Node(port, host);
