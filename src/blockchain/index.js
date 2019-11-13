@@ -11,8 +11,8 @@ const shareif = new Blockchain();
 const user2 = crypto.createDiffieHellman(length)
 user2.generateKeys('hex')
 
-console.log(`Public key: ${ user2.getPublicKey() }\n`)
-console.log(`Private key: ${ user2.getPrivateKey() }`)
+console.log(`Public key: ${user2.getPublicKey('hex')}\n`)
+console.log(`Private key: ${user2.getPrivateKey('hex')}`)
 
 // // Chat 1
 // const newBlock = new Block(

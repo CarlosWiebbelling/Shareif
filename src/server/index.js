@@ -1,4 +1,5 @@
 const Node = require('./node');
+
 const { getLocalAddress } = require('./localAddress');
 
 if (!process.env.PORT)
@@ -8,3 +9,8 @@ const port = process.env.PORT;
 const host = getLocalAddress() || '0.0.0.0';
 
 const server = new Node(port, host);
+
+setTimeout(() => {
+  server.broadcast("test")
+
+}, 1000);
