@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Shareif</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <h1>Shareif</h1>
+  <script>
+    const ws = new WebSocket('ws://10.132.84.15:8080');
+    ws.onopen = evt => {
+      console.log(evt);
+      ws.send("Here's some text that the server is urgently awaiting!");
+    };
+
+    window.ws = ws;
+  </script>
+</body>
+
+</html>

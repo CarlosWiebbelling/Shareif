@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "peer": "PORT=10492 node ./src/server/index"
+    "peer": "PORT=10492 node index"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "elliptic": "^6.5.1"
+    "elliptic": "^6.5.1",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v16.4.0"
   }
 }
