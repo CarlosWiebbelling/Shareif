@@ -11,11 +11,19 @@
 <body>
   <h1>Shareif</h1>
   <script>
-    const ws = new WebSocket('ws://10.132.84.15:8080');
+    const ws = new WebSocket('ws://localhost:8080');
     ws.onopen = evt => {
       console.log(evt);
       ws.send("Here's some text that the server is urgently awaiting!");
     };
+
+    ws.onerror = evt => {
+      console.log(`Error: ${evt}`);
+    }
+
+    ws.onclose = evt => {
+      console.log(`Close: ${evt}`);
+    }
 
     window.ws = ws;
   </script>

@@ -7,9 +7,11 @@ server
   .App()
   .ws('/*', {
     message: (ws, message, isBinary) => {
-      console.log('Message from WS');
-      peer.broadcast(Buffer.from(message).toString());
-      let ok = ws.send(message, isBinary);
+      const msg = Buffer.from(message).toString();
+      console.log(msg);
+      peer.broadcast(msg);
+
+      // let ok = ws.send(message, isBinary);
     }
   })
   .any('/*', (res, req) => {
