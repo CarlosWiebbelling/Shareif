@@ -1,4 +1,5 @@
 const Node = require('./node');
+
 const { getLocalAddress } = require('./localAddress');
 
 if (!process.env.PORT)
@@ -7,9 +8,6 @@ if (!process.env.PORT)
 const port = process.env.PORT;
 const host = getLocalAddress() || '0.0.0.0';
 
-const server = new Node(port, host);
+const peer = new Node(port, host);
 
-const port = process.env.PORT;
-const host = getLocalAddress() || '0.0.0.0';
-
-const server = new Node(port, host);
+module.exports = { peer };
