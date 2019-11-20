@@ -9,7 +9,6 @@ class Block {
     this.toAddress = toAddress;
     this.fromAddress = fromAddress;
     this.message = message;
-    this.calculateHash();
   }
 
   encrypt(text, password) {
@@ -18,7 +17,8 @@ class Block {
     let cipher = crypto.createCipher(algorithm, password);
     let crypted = cipher.update(text, "utf8", "hex");
     crypted += cipher.final("hex");
-    return crypted;
+    this.message = crypted;
+    this.calculateHash();
   }
 
   decrypt(text, password) {
@@ -41,7 +41,7 @@ class Block {
     if (this.toAddress === this.fromAddress)
       throw new Error("You cannot send messages to yourself!");
 
-    this.message = this.encrypt(this.message, privateKey);
+    this.encrypt(this.message, privateKey);
     this.calculateHash();
   }
 
@@ -58,7 +58,7 @@ class Block {
 
 class Blockchain {
   constructor() {
-    this.broadcast = {
+    this.mainChannel = {
       publicKey: "shareifPublicKey",
       privateKey: "shareifPrivateKey"
     };
@@ -71,8 +71,9 @@ class Blockchain {
       "127.0.0.1",
       "192.168.0.1",
       "Hello! Welcome to Shareif.",
-      this.broadcast.publicKey
+      this.mainChannel.publicKey
     );
+    genesis.calculateHash();
     return genesis;
   }
 

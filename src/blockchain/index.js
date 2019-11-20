@@ -5,7 +5,7 @@ const { Blockchain, Block } = require("./blockchain");
 const shareif = new Blockchain();
 
 const addBlock = block => {
-  block.signTransaction(shareif.broadcast.privateKey);
+  block.encrypt(block.message, shareif.mainChannel.privateKey);
   shareif.addMessage(block);
 };
 
@@ -17,7 +17,7 @@ user2.generateKeys("hex");
 addBlock(
   new Block(
     Date.parse("2017-01-01"),
-    shareif.broadcast.publicKey,
+    shareif.mainChannel.publicKey,
     user2.getPublicKey("hex"),
     "Batata frita",
     shareif.getLatestBlock().hash
@@ -26,7 +26,7 @@ addBlock(
 addBlock(
   new Block(
     Date.parse("2017-01-01"),
-    shareif.broadcast.publicKey,
+    shareif.mainChannel.publicKey,
     user2.getPublicKey("hex"),
     "Batata frita fritinha fritosa frituda lorem ipsum dolor sit amet oloquinho meu esse texto ta ficando muito chato de escrever na moral",
     shareif.getLatestBlock().hash
@@ -35,6 +35,6 @@ addBlock(
 
 console.log(shareif.getLatestBlock().getMessage("shareifPrivateKey"));
 
-// newBlock.signTransaction(shareif.broadcast.privateKey);
+// newBlock.signTransaction(shareif.mainChannel.privateKey);
 
 // shareif.addMessage(newBlock);
