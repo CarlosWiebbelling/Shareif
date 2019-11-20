@@ -1,6 +1,9 @@
 const fs = require('fs');
 const server = require('uWebSockets.js');
+
 const { peer } = require('./src/node/index');
+const { Blockchain, Block, shareif } = require('./src/blockchain/index');
+
 const page = fs.readFileSync('./src/public/index.html', 'utf-8');
 
 server
@@ -22,3 +25,5 @@ server
       console.log(`[8080] Listening for connections...`);
     }
   });
+
+console.log(shareif);

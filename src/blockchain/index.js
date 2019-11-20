@@ -38,3 +38,5 @@ console.log(shareif.getLatestBlock().getMessage("shareifPrivateKey"));
 // newBlock.signTransaction(shareif.mainChannel.privateKey);
 
 // shareif.addMessage(newBlock);
+
+module.exports = { Blockchain, Block, shareif };
