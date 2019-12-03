@@ -4,12 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "peer": "PORT=10492 node index"
+    "dev": "PORT=10492 nodemon index",
+    "prod": "PORT=10492 node index"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v16.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.1"
   }
 }

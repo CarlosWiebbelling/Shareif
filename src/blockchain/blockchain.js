@@ -47,7 +47,6 @@ class Block {
 
   isValid(previousBlock) {
     if (this.previousHash !== previousBlock.hash) return false;
-
     return true;
   }
 
@@ -73,6 +72,7 @@ class Blockchain {
       "Hello! Welcome to Shareif.",
       this.mainChannel.publicKey
     );
+    genesis.height = 0;
     genesis.calculateHash();
     return genesis;
   }
@@ -98,6 +98,7 @@ class Blockchain {
         "Message length should meet the specifications(0 to 140 characteres)."
       );
 
+    block.height = this.chain.length
     this.chain.push(block);
   }
 
@@ -110,6 +111,7 @@ class Blockchain {
     return messages;
   }
 
+  //
   /**
    * Loops over all the blocks in the chain and verify if they are properly
    * linked together and nobody has tampered with the hashes. By checking
@@ -135,6 +137,14 @@ class Blockchain {
 
     return true;
   }
+
+  // compareHeights(block) {
+    
+  //   if(block.height < this.getLatestBlock.height ){
+  //     let    
+  //   }
+
+  // }
 }
 
 module.exports.Blockchain = Blockchain;
