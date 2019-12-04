@@ -138,13 +138,15 @@ class Blockchain {
     return true;
   }
 
-  // compareHeights(block) {
-    
-  //   if(block.height < this.getLatestBlock.height ){
-  //     let    
-  //   }
-
-  // }
+//   compareHeights(block) {
+//     if(block.height < this.getLatestBlock.height ){
+//       const blocks = [];
+//       for(let remaining = block.height; remaining > 0; remaining--){
+//         blocks.push(this.chain[this.chain.length - remaining]);
+//       }
+//       return blocks;
+//     }
+//   }
 }
 
 module.exports.Blockchain = Blockchain;

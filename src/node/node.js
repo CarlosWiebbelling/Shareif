@@ -24,6 +24,10 @@ class Node {
     }
   }
 
+  getConnectionsAddress() {
+    return this.connections.map(socket => socket.remoteAddress);
+  }
+
   connectTo(address) {
     if (address.split(':').length !== 2)
       throw Error('Syntax error: host:port');
@@ -64,7 +68,7 @@ class Node {
   onClose(socket, hadError) {
     console.log('Socket closed.');
     const index = this.connections.indexOf(socket);
-    if (index !== -1) 
+    if (index !== -1)
       this.connections.splice(index, 1);
   }
 

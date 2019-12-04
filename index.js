@@ -6,26 +6,27 @@ const { Blockchain, Block, shareif } = require('./src/blockchain/index');
 
 const page = fs.readFileSync('./src/public/index.html', 'utf-8');
 
-const handleCreatePair = payload => {
-  console.log(`Seed:${payload.seed}`);
-};
-
-const handleSendMessage = payload => {
-  console.log(`Seed:${payload.publicKey}`);
-  console.log(`Seed:${payload.msg}`);
-};
-
-const handleSignIn = payload => {
-  console.log(`Seed:${payload.publicKey}`);
-  console.log(`Seed:${payload.privateKey}`);
-};
-
-
 peer.onMessage = (socket, message) => {
   console.log(`Received: ${message}`)
   peer.broadcast(message)
 }
 
+const handleCreatePair = payload => {
+  console.log(`Seed:${payload.seed}`);
+  console.log(peer.getConnectionsAddress())
+
+  // peer.broadcast(payload.seed)
+};
+
+const handleSendMessage = payload => {
+  console.log(`publicKey:${payload.publicKey}`);
+  console.log(`msg:${payload.msg}`);
+};
+
+const handleSignIn = payload => {
+  console.log(`publicKey:${payload.publicKey}`);
+  console.log(`privateKey:${payload.privateKey}`);
+};
 
 server
   .App()
@@ -63,23 +64,3 @@ server
   });
 
 console.log(shareif);
-
-/*
-
-Fronted
-
-PONG_CREATE_PAIR {
-  publicKey
-  privateKey
-}
-
-PONG_SEND_MESSAGE {
-
-}
-
-RECEIVE_MESSAGES {
-  publicKey,
-  msg
-}
-
-*/
