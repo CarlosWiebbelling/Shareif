@@ -1,21 +1,34 @@
 const fs = require('fs');
+const crypto = require("crypto");
 const server = require('uWebSockets.js');
 
-const { peer } = require('./src/node/index');
-const { Blockchain, Block, shareif } = require('./src/blockchain/index');
+const { node } = require('./src/node/index');
+const { Blockchain, Block } = require('./src/blockchain/index');
+
+const shareif = new Blockchain();
+
+shareif.addMessage(new Block(
+  Date.parse("2017-01-01"),
+  shareif.mainChannel.publicKey,
+  'sadsadsadsad',
+  "Batata frita",
+  shareif.getLatestBlock().hash
+))
+
+console.log(shareif);
 
 const page = fs.readFileSync('./src/public/index.html', 'utf-8');
 
-peer.onMessage = (socket, message) => {
+node.onMessage = (socket, message) => {
   console.log(`Received: ${message}`)
-  peer.broadcast(message)
+  node.broadcast(message)
 }
 
 const handleCreatePair = payload => {
   console.log(`Seed:${payload.seed}`);
-  console.log(peer.getConnectionsAddress())
+  console.log(node.getConnectionsAddress())
 
-  // peer.broadcast(payload.seed)
+  // node.broadcast(payload.seed)
 };
 
 const handleSendMessage = payload => {
@@ -49,7 +62,7 @@ server
       }
 
       // console.log(msg);
-      // peer.broadcast(msg);
+      // node.broadcast(msg);
 
       ws.send(JSON.stringify({ ss: 'dsauyggdysaygdsaydsay' }), isBinary);
     }
@@ -62,5 +75,3 @@ server
       console.log(`[8080] Listening for connections...`);
     }
   });
-
-console.log(shareif);

@@ -1,6 +1,5 @@
 const Node = require('./node');
-
-const { getLocalAddress } = require('./localAddress');
+const { getLocalAddress } = require('./local-address');
 
 if (!process.env.PORT)
   throw Error('PORT expected.');
@@ -8,6 +7,6 @@ if (!process.env.PORT)
 const port = process.env.PORT;
 const host = getLocalAddress() || '0.0.0.0';
 
-const peer = new Node(port, host);
+const node = new Node(port, host);
 
-module.exports = { peer };
+module.exports = { node };

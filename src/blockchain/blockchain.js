@@ -1,59 +1,4 @@
-const crypto = require("crypto");
-const algorithm = "aes-256-ctr";
-const ALGORITHM = "aes-256-gcm";
-
-class Block {
-  constructor(timestamp, toAddress, fromAddress, message, previousHash = "") {
-    this.previousHash = previousHash;
-    this.timestamp = timestamp;
-    this.toAddress = toAddress;
-    this.fromAddress = fromAddress;
-    this.message = message;
-  }
-
-  encrypt(text, password) {
-    const iv = Buffer.alloc(48, 0);
-    // let cipher = crypto.createCipheriv(ALGORITHM, password, iv);
-    let cipher = crypto.createCipher(algorithm, password);
-    let crypted = cipher.update(text, "utf8", "hex");
-    crypted += cipher.final("hex");
-    this.message = crypted;
-    this.calculateHash();
-  }
-
-  decrypt(text, password) {
-    const iv = Buffer.alloc(48, 0);
-    // let decy = crypto.createDecipheriv(ALGORITHM, password, iv);
-    let decy = crypto.createDecipher(algorithm, password);
-    let message = decy.update(text, "hex", "utf8");
-    message += decy.final("utf8");
-    return message;
-  }
-
-  calculateHash() {
-    this.hash = crypto
-      .createHash("sha256")
-      .update(this.previousHash + this.timestamp + this.message)
-      .digest("hex");
-  }
-
-  signTransaction(privateKey) {
-    if (this.toAddress === this.fromAddress)
-      throw new Error("You cannot send messages to yourself!");
-
-    this.encrypt(this.message, privateKey);
-    this.calculateHash();
-  }
-
-  isValid(previousBlock) {
-    if (this.previousHash !== previousBlock.hash) return false;
-    return true;
-  }
-
-  getMessage(privateKey) {
-    return this.decrypt(this.message, privateKey);
-  }
-}
+const Block = require('./block');
 
 class Blockchain {
   constructor() {
@@ -86,9 +31,9 @@ class Blockchain {
   }
 
   addMessage(block) {
-    if (!this.isChainValid()) throw new Error("Invalid Chain");
-
-    if (!block.isValid(this.getLatestBlock())) throw new Error("Block invalid");
+    if (!(block instanceof Block)) throw new Error("Invalid prototype");
+    if (!this.isChainValid()) throw new Error("Invalid chain");
+    if (!block.isValid(this.getLatestBlock())) throw new Error("Invalid block");
 
     if (!block.fromAddress || !block.toAddress)
       throw new Error("Message must include from and to address");
@@ -138,16 +83,16 @@ class Blockchain {
     return true;
   }
 
-//   compareHeights(block) {
-//     if(block.height < this.getLatestBlock.height ){
-//       const blocks = [];
-//       for(let remaining = block.height; remaining > 0; remaining--){
-//         blocks.push(this.chain[this.chain.length - remaining]);
-//       }
-//       return blocks;
-//     }
-//   }
+  compareHeights(block) {
+    if (!(block instanceof Block)) throw new Error("Invalid prototype");
+    if (block.height < this.getLatestBlock.height) {
+      const blocks = [];
+      for (let remaining = block.height; remaining > 0; remaining--) {
+        blocks.push(this.chain[this.chain.length - remaining]);
+      }
+      return blocks;
+    }
+  }
 }
 
-module.exports.Blockchain = Blockchain;
-module.exports.Block = Block;
+module.exports = Blockchain;
