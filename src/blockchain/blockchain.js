@@ -3,19 +3,19 @@ const Block = require('./block');
 class Blockchain {
   constructor() {
     this.mainChannel = {
-      publicKey: "shareifPublicKey",
-      privateKey: "shareifPrivateKey"
+      publicKey: 'shareifPublicKey',
+      privateKey: 'shareifPrivateKey'
     };
     this.chain = [this.createGenesisBlock()];
   }
 
   createGenesisBlock() {
     let genesis = new Block(
-      Date.parse("2017-01-01"),
-      "127.0.0.1",
-      "192.168.0.1",
-      "Hello! Welcome to Shareif.",
-      this.mainChannel.publicKey
+      1576016676528,
+      this.mainChannel.publicKey,
+      this.mainChannel.privateKey,
+      'Hello! Welcome to Shareif.',
+      '[object Object]'
     );
     genesis.height = 0;
     genesis.calculateHash();
@@ -31,16 +31,16 @@ class Blockchain {
   }
 
   addMessage(block) {
-    if (!(block instanceof Block)) throw new Error("Invalid prototype");
-    if (!this.isChainValid()) throw new Error("Invalid chain");
-    if (!block.isValid(this.getLatestBlock())) throw new Error("Invalid block");
+    if (!(block instanceof Block)) throw new Error('Invalid prototype');
+    if (!this.isChainValid()) throw new Error('Invalid chain');
+    if (!block.isValid(this.getLatestBlock())) throw new Error('Invalid block');
 
     if (!block.fromAddress || !block.toAddress)
-      throw new Error("Message must include from and to address");
+      throw new Error('Message must include from and to address');
 
     if (block.message >= 0 && block.message <= 140)
       throw new Error(
-        "Message length should meet the specifications(0 to 140 characteres)."
+        'Message length should meet the specifications(0 to 140 characteres).'
       );
 
     block.height = this.chain.length
@@ -84,7 +84,7 @@ class Blockchain {
   }
 
   compareHeights(block) {
-    if (!(block instanceof Block)) throw new Error("Invalid prototype");
+    if (!(block instanceof Block)) throw new Error('Invalid prototype');
     if (block.height < this.getLatestBlock.height) {
       const blocks = [];
       for (let remaining = block.height; remaining > 0; remaining--) {

@@ -1,21 +1,15 @@
 const fs = require('fs');
-const crypto = require("crypto");
+const crypto = require('crypto');
+const ecies = require('ecies-lite');
 const server = require('uWebSockets.js');
 
 const { node } = require('./src/node/index');
 const { Blockchain, Block } = require('./src/blockchain/index');
 
 const shareif = new Blockchain();
+// console.log(shareif);
 
-shareif.addMessage(new Block(
-  Date.parse("2017-01-01"),
-  shareif.mainChannel.publicKey,
-  'sadsadsadsad',
-  "Batata frita",
-  shareif.getLatestBlock().hash
-))
 
-console.log(shareif);
 
 const page = fs.readFileSync('./src/public/index.html', 'utf-8');
 
@@ -24,19 +18,25 @@ node.onMessage = (socket, message) => {
   node.broadcast(message)
 }
 
-const handleCreatePair = payload => {
-  console.log(`Seed:${payload.seed}`);
-  console.log(node.getConnectionsAddress())
-
-  // node.broadcast(payload.seed)
+const handleCreatePair = (ws, isBinary, payload) => {
+  const keys = Block.generateKeyPair();
+  ws.send(JSON.stringify({ type: 'PONG_CREATE_PAIR', payload: keys }), isBinary);
+  // console.log(node.getConnectionsAddress())
 };
 
-const handleSendMessage = payload => {
-  console.log(`publicKey:${payload.publicKey}`);
-  console.log(`msg:${payload.msg}`);
+const handleSendMessage = (payload) => {
+  shareif.addMessage(new Block(
+    Date.now(),
+    payload.publicKey,
+    payload.userId,
+    payload.msg,
+    shareif.getLatestBlock().hash
+  ));
+
+  console.log(shareif.getLatestBlock());
 };
 
-const handleSignIn = payload => {
+const handleSignIn = (payload) => {
   console.log(`publicKey:${payload.publicKey}`);
   console.log(`privateKey:${payload.privateKey}`);
 };
@@ -49,7 +49,7 @@ server
       console.log(msg)
       switch (msg.type) {
         case 'PING_CREATE_PAIR':
-          handleCreatePair(msg.payload);
+          handleCreatePair(ws, isBinary, msg.payload);
           break;
         case 'SEND_MESSAGE':
           handleSendMessage(msg.payload);
@@ -64,7 +64,7 @@ server
       // console.log(msg);
       // node.broadcast(msg);
 
-      ws.send(JSON.stringify({ ss: 'dsauyggdysaygdsaydsay' }), isBinary);
+
     }
   })
   .any('/*', (res, req) => {

@@ -15,19 +15,17 @@
 
     // Métodos que ENVIAM dados para o backend
 
-    window.sendCreatePair = seed => {
+    window.sendCreatePair = () => {
       ws.send(JSON.stringify({
-        type: 'PING_CREATE_PAIR',
-        payload: {
-          seed
-        }
+        type: 'PING_CREATE_PAIR'
       }));
     };
 
-    window.sendMessage = (publicKey, msg) => {
+    window.sendMessage = (userId, publicKey, msg) => {
       ws.send(JSON.stringify({
         type: 'SEND_MESSAGE',
         payload: {
+          userId,
           publicKey,
           msg
         }
@@ -46,8 +44,9 @@
 
     // Métodos que RECEBEM dados do backend
 
-    const handleCreatePairResponse = (publicKey, privateKey) => {
+    const handleCreatePairResponse = ({ publicKey, privateKey }) => {
       console.log(publicKey, privateKey);
+
     };
 
     const handleReceiveMessage = (publicKey, msg) => {

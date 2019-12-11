@@ -1,9 +1,11 @@
-const crypto = require("crypto");
-const algorithm = "aes-256-ctr";
-const ALGORITHM = "aes-256-gcm";
+const crypto = require('crypto');
+const algorithm = 'aes-256-ctr';
+
+const ecies = require('ecies-lite');
+const ecdh = crypto.createECDH('secp256k1');
 
 class Block {
-  constructor(timestamp, toAddress, fromAddress, message, previousHash = "") {
+  constructor(timestamp, toAddress, fromAddress, message, previousHash = '') {
     this.timestamp = timestamp;
     this.toAddress = toAddress;
     this.fromAddress = fromAddress;
@@ -11,35 +13,25 @@ class Block {
     this.previousHash = previousHash;
   }
 
-  encrypt(text, password) {
-    const iv = Buffer.alloc(48, 0);
-    // let cipher = crypto.createCipheriv(ALGORITHM, password, iv);
-    let cipher = crypto.createCipher(algorithm, password);
-    let crypted = cipher.update(text, "utf8", "hex");
-    crypted += cipher.final("hex");
-    this.message = crypted;
+  encrypt(publicKey) {
+    this.message = ecies.encrypt(publicKey, Buffer.from(this.message));
     this.calculateHash();
   }
 
-  decrypt(text, password) {
-    const iv = Buffer.alloc(48, 0);
-    // let decy = crypto.createDecipheriv(ALGORITHM, password, iv);
-    let decy = crypto.createDecipher(algorithm, password);
-    let message = decy.update(text, "hex", "utf8");
-    message += decy.final("utf8");
-    return message;
+  decrypt(privateKey) {
+    return ecies.decrypt(ecdh.getPrivateKey(), this.message);
   }
 
   calculateHash() {
     this.hash = crypto
-      .createHash("sha256")
+      .createHash('sha256')
       .update(this.previousHash + this.timestamp + this.message)
-      .digest("hex");
+      .digest('hex');
   }
 
   signTransaction(privateKey) {
     if (this.toAddress === this.fromAddress)
-      throw new Error("You cannot send messages to yourself!");
+      throw new Error('You cannot send messages to yourself!');
 
     this.encrypt(this.message, privateKey);
     this.calculateHash();
@@ -52,6 +44,15 @@ class Block {
 
   getMessage(privateKey) {
     return this.decrypt(this.message, privateKey);
+  }
+
+  static generateKeyPair() {
+    let ecdh = crypto.createECDH('secp256k1');
+    ecdh.generateKeys();
+    return {
+      publicKey: ecdh.getPublicKey('hex'),
+      privateKey: ecdh.getPrivateKey('hex')
+    }
   }
 }
 
