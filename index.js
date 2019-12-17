@@ -7,6 +7,7 @@ const shareif = new Blockchain();
 const page = fs.readFileSync('./src/public/index.html', 'utf-8');
 
 let actualWS = null;
+const subscribedChannels = {};
 
 // ---------------------------------------------------------------------------------
 
@@ -17,7 +18,7 @@ const handleCreatePair = (ws) => {
   // console.log(node.getConnectionsAddress())
 };
 
-const handleSendMessage = (payload) => {
+const handleSendMessage = (ws, payload) => {
   const block = new Block(
     Date.now(),
     payload.publicKey,
@@ -34,17 +35,25 @@ const handleSendMessage = (payload) => {
   }));
 };
 
-const handleSignIn = (payload) => {
-  const msg = shareif.getLatestBlock().getMessage(payload.privateKey);
-  console.log(msg);
+const handleSignIn = (ws, payload) => {
+  subscribedChannels[payload.publicKey] = true;
+  const msgs = shareif.getChatMessages(payload.publicKey);
+  
+  ws.send(JSON.stringify({
+    type: 'PONG_CREATE_PAIR', 
+    payload: msgs
+  }));
+  
   // console.log(`publicKey:${payload.publicKey}`);
   // console.log(`privateKey:${payload.privateKey}`);
 };
 
 // ---------------------------------------------------------------------------------
 
-const handleBlockPropagation = (block) => {
+const handleBlockPropagation = (socket, block) => {
   console.log(block);
+  // eu ja tenho esse bloc
+  // 
   if (actualWS) actualWS.send('dsadsadsada')
 };
 
@@ -56,7 +65,7 @@ node.onMessage = (socket, message) => {
 
   switch (data.type) {
     case 'BLOCK_PROPAGATION':
-      handleBlockPropagation(data.payload);
+      handleBlockPropagation(socket, data.payload);
       break;
     default:
       break;
@@ -78,10 +87,10 @@ server
           handleCreatePair(ws);
           break;
         case 'SEND_MESSAGE':
-          handleSendMessage(msg.payload);
+          handleSendMessage(ws, msg.payload);
           break;
         case 'SIGN_IN':
-          handleSignIn(msg.payload);
+          handleSignIn(ws, msg.payload);
           break;
         default:
           break;

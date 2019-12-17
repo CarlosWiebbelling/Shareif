@@ -51,11 +51,13 @@ class Blockchain {
     }
   }
 
-  getAllMessages(address) {
+  getChatMessages(publicKey) {
     try {
       const messages = [];
       for (const block of this.chain)
-        if (block.toAddress === address) messages.push(block);
+        if (block.toAddress === publicKey) {
+          messages.push(block);
+        } 
 
       return messages;
     } catch (err) {
