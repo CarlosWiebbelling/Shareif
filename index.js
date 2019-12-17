@@ -14,7 +14,7 @@ const subscribedChannels = {};
 const handleCreatePair = (ws) => {
   const keys = generateKeyPair();
   ws.send(JSON.stringify({ type: 'PONG_CREATE_PAIR', payload: keys }));
-  console.log(shareif.chain);
+  // console.log(shareif.chain);
   // console.log(node.getConnectionsAddress())
 };
 
@@ -40,10 +40,10 @@ const handleSignIn = (ws, payload) => {
   const msgs = shareif.getChatMessages(payload.publicKey);
   
   ws.send(JSON.stringify({
-    type: 'PONG_CREATE_PAIR', 
+    type: 'RECEIVE_CHANNEL_DATA', 
     payload: msgs
   }));
-  
+
   // console.log(`publicKey:${payload.publicKey}`);
   // console.log(`privateKey:${payload.privateKey}`);
 };
@@ -52,9 +52,19 @@ const handleSignIn = (ws, payload) => {
 
 const handleBlockPropagation = (socket, block) => {
   console.log(block);
-  // eu ja tenho esse bloc
-  // 
-  if (actualWS) actualWS.send('dsadsadsada')
+  if (!block.isValid(shareif.getLatestBlock())) {
+    // socket
+    return;
+  };
+
+  shareif.addMessage(block);
+  
+  if (subscribedChannels[block.toAddress]) {
+    if (actualWS) actualWS.send(JSON.stringify({
+      type: 'RECEIVE_MESSAGE',
+      payload: block
+    }));
+  }
 };
 
 // ---------------------------------------------------------------------------------
