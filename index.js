@@ -6,9 +6,13 @@ const { Blockchain, Block, generateKeyPair } = require('./src/blockchain/index')
 const shareif = new Blockchain();
 const page = fs.readFileSync('./src/public/index.html', 'utf-8');
 
+let actualWS = null;
+
+// ---------------------------------------------------------------------------------
+
 const handleCreatePair = (ws) => {
   const keys = generateKeyPair();
-  ws.send(JSON.stringify({ type: 'PONG_CREATE_PAIR', payload: keys }), isBinary);
+  ws.send(JSON.stringify({ type: 'PONG_CREATE_PAIR', payload: keys }));
   console.log(shareif.chain);
   // console.log(node.getConnectionsAddress())
 };
@@ -37,18 +41,26 @@ const handleSignIn = (payload) => {
   // console.log(`privateKey:${payload.privateKey}`);
 };
 
+// ---------------------------------------------------------------------------------
+
+const handleBlockPropagation = (block) => {
+  console.log(block);
+  if (actualWS) actualWS.send('dsadsadsada')
+};
+
+// ---------------------------------------------------------------------------------
+
 node.onMessage = (socket, message) => {
   const data = JSON.parse(message.toString());
   console.log(data);
 
   switch (data.type) {
     case 'BLOCK_PROPAGATION':
-      console.log(data.payload);
+      handleBlockPropagation(data.payload);
       break;
     default:
       break;
   }
-
   // node.broadcast(message);
 }
 
@@ -57,7 +69,7 @@ server
   .ws('/*', {
     open: (ws, req) => {
       console.log('Front-end connected');
-
+      actualWS = ws;
     },
     message: (ws, message, isBinary) => {
       const msg = JSON.parse(Buffer.from(message).toString());

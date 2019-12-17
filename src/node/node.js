@@ -62,7 +62,7 @@ class Node {
   }
 
   onConnection(socket) {
-    // console.log(this.connections.length);
+    // console.log(this.connections.length);  
   }
 
   onClose(socket, hadError) {
