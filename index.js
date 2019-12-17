@@ -6,7 +6,7 @@ const { Blockchain, Block, generateKeyPair } = require('./src/blockchain/index')
 const shareif = new Blockchain();
 const page = fs.readFileSync('./src/public/index.html', 'utf-8');
 
-const handleCreatePair = (ws, isBinary, payload) => {
+const handleCreatePair = (ws) => {
   const keys = generateKeyPair();
   ws.send(JSON.stringify({ type: 'PONG_CREATE_PAIR', payload: keys }), isBinary);
   console.log(shareif.chain);
@@ -24,8 +24,10 @@ const handleSendMessage = (payload) => {
 
   block.sign(payload.publicKey);
   shareif.addMessage(block);
-
-  // console.log(shareif.getLatestBlock());
+  node.broadcast(JSON.stringify({
+    type: 'BLOCK_PROPAGATION',
+    payload: block
+  }));
 };
 
 const handleSignIn = (payload) => {
@@ -36,8 +38,18 @@ const handleSignIn = (payload) => {
 };
 
 node.onMessage = (socket, message) => {
-  console.log(`Received: ${message}`)
-  node.broadcast(message);
+  const data = JSON.parse(message.toString());
+  console.log(data);
+
+  switch (data.type) {
+    case 'BLOCK_PROPAGATION':
+      console.log(data.payload);
+      break;
+    default:
+      break;
+  }
+
+  // node.broadcast(message);
 }
 
 server
@@ -45,12 +57,13 @@ server
   .ws('/*', {
     open: (ws, req) => {
       console.log('Front-end connected');
+
     },
     message: (ws, message, isBinary) => {
       const msg = JSON.parse(Buffer.from(message).toString());
       switch (msg.type) {
         case 'PING_CREATE_PAIR':
-          handleCreatePair(ws, isBinary, msg.payload);
+          handleCreatePair(ws);
           break;
         case 'SEND_MESSAGE':
           handleSendMessage(msg.payload);
