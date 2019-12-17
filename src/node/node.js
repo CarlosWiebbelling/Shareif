@@ -58,11 +58,11 @@ class Node {
   }
 
   onMessage(socket, message) {
-    console.log('Received: ', message.toString());
+    // console.log('Received: ', message.toString());
   }
 
   onConnection(socket) {
-    console.log(this.connections.length);
+    // console.log(this.connections.length);
   }
 
   onClose(socket, hadError) {

@@ -3,16 +3,8 @@ const server = require('uWebSockets.js');
 
 const { node } = require('./src/node/index');
 const { Blockchain, Block, generateKeyPair } = require('./src/blockchain/index');
-
 const shareif = new Blockchain();
-// console.log(shareif);
-
 const page = fs.readFileSync('./src/public/index.html', 'utf-8');
-
-node.onMessage = (socket, message) => {
-  console.log(`Received: ${message}`)
-  node.broadcast(message);
-}
 
 const handleCreatePair = (ws, isBinary, payload) => {
   const keys = generateKeyPair();
@@ -43,9 +35,17 @@ const handleSignIn = (payload) => {
   // console.log(`privateKey:${payload.privateKey}`);
 };
 
+node.onMessage = (socket, message) => {
+  console.log(`Received: ${message}`)
+  node.broadcast(message);
+}
+
 server
   .App()
   .ws('/*', {
+    open: (ws, req) => {
+      console.log('Front-end connected');
+    },
     message: (ws, message, isBinary) => {
       const msg = JSON.parse(Buffer.from(message).toString());
       switch (msg.type) {
