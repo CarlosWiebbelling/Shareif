@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const ecies = require('ecies-lite');
-const ecdh = crypto.createECDH('secp256k1');
 
 class Block {
   constructor(timestamp, toAddress, fromAddress, message, previousHash = '') {
@@ -11,7 +10,36 @@ class Block {
     this.previousHash = previousHash;
   }
 
-  encrypt(publicKey) {
+  getMessage(privateKey) {
+    try {
+      const msg = this._decrypt(privateKey);
+      if (msg)
+        return msg.toString();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  sign(publicKey) {
+    try {
+      this._encrypt(publicKey);
+      this._calculateHash();
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  isValid(previousBlock) {
+    try {
+      if (this.previousHash !== previousBlock.hash) return false;
+      return true;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  _encrypt(publicKey) {
     try {
       const data = ecies.encrypt(
         Buffer.from(publicKey, 'hex'),
@@ -25,13 +53,12 @@ class Block {
         mac: data.mac.toString('hex')
       };
 
-      this.calculateHash();
     } catch (err) {
       console.error(err);
     }
   }
 
-  decrypt(privateKey) {
+  _decrypt(privateKey) {
     try {
       const data = {
         epk: Buffer.from(this.message.epk, 'hex'),
@@ -49,44 +76,12 @@ class Block {
     }
   }
 
-  calculateHash() {
+  _calculateHash() {
     try {
       this.hash = crypto
         .createHash('sha256')
         .update(this.previousHash + this.timestamp + this.message)
         .digest('hex');
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  isValid(previousBlock) {
-    try {
-      if (this.previousHash !== previousBlock.hash) return false;
-      return true;
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  getMessage(privateKey) {
-    try {
-      const msg = this.decrypt(privateKey);
-      if (msg)
-        return msg.toString();
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  static generateKeyPair() {
-    try {
-      ecdh.generateKeys();
-
-      return {
-        publicKey: ecdh.getPublicKey('hex'),
-        privateKey: ecdh.getPrivateKey('hex')
-      }
     } catch (err) {
       console.error(err);
     }

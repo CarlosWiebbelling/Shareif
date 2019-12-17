@@ -2,23 +2,19 @@ const Block = require('./block');
 
 class Blockchain {
   constructor() {
-    this.mainChannel = {
-      publicKey: 'shareifPublicKey',
-      privateKey: 'shareifPrivateKey'
-    };
     this.chain = [this.createGenesisBlock()];
   }
 
   createGenesisBlock() {
     let genesis = new Block(
       1576016676528,
-      this.mainChannel.publicKey,
-      this.mainChannel.privateKey,
-      'Hello! Welcome to Shareif.',
-      '[object Object]'
+      '049e6d7c3632e3a61f7d33423b7829c1ec5a3b7f29ff2db5908f5d1bbaa81a7c0895983634697c2596c832c81a4b94bf11a7d19a56e6df8a38df6af0a46360cecf',
+      'f9b8940cd4c4571942867ec73b273b1c1b5da055b8ba5cc7e3518681cb5e7023',
+      'SHAREIF GENESIS BLOCK:\n toAddress: Here is the general channel public key,\n fromAddress: Here is the general channel private key',
+      '[object Object] Not Found // DogeLife'
     );
     genesis.height = 0;
-    genesis.calculateHash();
+    genesis._calculateHash();
     return genesis;
   }
 
@@ -56,7 +52,6 @@ class Blockchain {
     return messages;
   }
 
-  //
   /**
    * Loops over all the blocks in the chain and verify if they are properly
    * linked together and nobody has tampered with the hashes. By checking

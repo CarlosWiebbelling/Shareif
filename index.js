@@ -2,12 +2,10 @@ const fs = require('fs');
 const server = require('uWebSockets.js');
 
 const { node } = require('./src/node/index');
-const { Blockchain, Block } = require('./src/blockchain/index');
+const { Blockchain, Block, generateKeyPair } = require('./src/blockchain/index');
 
 const shareif = new Blockchain();
 // console.log(shareif);
-
-
 
 const page = fs.readFileSync('./src/public/index.html', 'utf-8');
 
@@ -17,7 +15,7 @@ node.onMessage = (socket, message) => {
 }
 
 const handleCreatePair = (ws, isBinary, payload) => {
-  const keys = Block.generateKeyPair();
+  const keys = generateKeyPair();
   ws.send(JSON.stringify({ type: 'PONG_CREATE_PAIR', payload: keys }), isBinary);
   console.log(shareif.chain);
   // console.log(node.getConnectionsAddress())
@@ -32,7 +30,7 @@ const handleSendMessage = (payload) => {
     shareif.getLatestBlock().hash
   );
 
-  block.encrypt(payload.publicKey);
+  block.sign(payload.publicKey);
   shareif.addMessage(block);
 
   // console.log(shareif.getLatestBlock());
