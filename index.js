@@ -14,7 +14,7 @@ const subscribedChannels = {};
 const handleCreatePair = (ws) => {
   const keys = generateKeyPair();
   ws.send(JSON.stringify({ type: 'PONG_CREATE_PAIR', payload: keys }));
-  // console.log(shareif.chain);
+  console.log(shareif.chain);
   // console.log(node.getConnectionsAddress())
 };
 
@@ -51,18 +51,31 @@ const handleSignIn = (ws, payload) => {
 // ---------------------------------------------------------------------------------
 
 const handleBlockPropagation = (socket, block) => {
-  console.log(block);
-  if (!block.isValid(shareif.getLatestBlock())) {
+  const candidate = new Block(
+    block.timestap, 
+    block.toAddress, 
+    block.fromAddress, 
+    block.message, 
+    block.previousHash,
+    block.height,
+    block.hash
+  );
+  
+  if (!candidate.isValid(shareif.getLatestBlock())) {
     // socket
+    console.log('DEU RUIMMMMMMMMMMMMMMMMMMMMMMMMMMM')
+    console.log(candidate.previousHash);
+    console.log(shareif.getLatestBlock().hash);
+    console.log('DEU RUIMMMMMMMMMMMMMMMMMMMMMMMMMMM')
     return;
   };
 
-  shareif.addMessage(block);
-  
-  if (subscribedChannels[block.toAddress]) {
+  shareif.addMessage(candidate);
+
+  if (subscribedChannels[candidate.toAddress]) {
     if (actualWS) actualWS.send(JSON.stringify({
       type: 'RECEIVE_MESSAGE',
-      payload: block
+      payload: candidate
     }));
   }
 };

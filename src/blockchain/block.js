@@ -2,12 +2,14 @@ const crypto = require('crypto');
 const ecies = require('ecies-lite');
 
 class Block {
-  constructor(timestamp, toAddress, fromAddress, message, previousHash = '') {
+  constructor(timestamp, toAddress, fromAddress, message, previousHash = '', height, hash) {
     this.timestamp = timestamp;
     this.toAddress = toAddress;
     this.fromAddress = fromAddress;
     this.message = message;
     this.previousHash = previousHash;
+    this.height = height;
+    this.hash = hash;
   }
 
   getMessage(privateKey) {
@@ -32,8 +34,7 @@ class Block {
 
   isValid(previousBlock) {
     try {
-      if (this.previousHash !== previousBlock.hash) return false;
-      return true;
+      return this.previousHash === previousBlock.hash;
     } catch (err) {
       console.error(err);
     }
